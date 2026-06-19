@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untuk Tipa ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh; /* Optimasi viewport untuk browser HP */
+            background-color: #ffe6ea;
+            overflow: hidden; /* Supaya ga ada scrollbar pas tombol lari-lari */
+            position: relative;
+        }
+
+        /* Hiasan background hati */
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gif-container {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        .gif-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        h1 {
+            color: #ff4d6d;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        p {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap; /* Biar tombol rapi menumpuk jika layar HP super sempit */
+            position: relative;
+            width: 100%;
+            min-height: 50px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 20;
+        }
+
+        #btnYes {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        #btnYes:hover {
+            transform: scale(1.05);
+            background-color: #ff2a51;
+        }
+
+        #btnNo {
+            background-color: #e0e0e0;
+            color: #333;
+            /* Tambahan transisi biar lari-larinya smooth */
+            transition: top 0.2s ease, left 0.2s ease, transform 0.2s; 
+        }
+
+        /* Pesan setelah diterima */
+        #successMessage {
+            display: none;
+            color: #ff4d6d;
+            font-size: 22px;
+            font-weight: 900;
+            margin-top: 20px;
+            animation: popIn 0.5s ease forwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- Tambahan Responsif Mobile --- */
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+            }
+            .gif-container {
+                width: 160px;
+                height: 160px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            p {
+                font-size: 16px;
+                margin-bottom: 25px;
+            }
+            button {
+                padding: 10px 24px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <div class="gif-container">
+            <!-- Pakai GIF beruang gemes -->
+            <img id="mainGif" src="https://media.tenor.com/EfH_EwR7z1UAAAAi/tkthao219-bubududu.gif" alt="Cute Bear Asking">
+        </div>
+        
+        <h1 id="title">Halo Tipa! 🌸</h1>
+        <p id="question">Aku udah lama nyimpen perasaan ini...<br>Kamu mau gak jadi pacar aku?</p>
+
+        <div class="btn-container" id="btnWrapper">
+            <button id="btnYes">Mau banget! ❤️</button>
+            <button id="btnNo">Gak dulu deh</button>
+        </div>
+
+        <div id="successMessage">
+            Yeayyy! Makasih Tipa sayang! I Love You! 💖🥰
+        </div>
+    </div>
+
+    <script>
+        const btnNo = document.getElementById('btnNo');
+        const btnYes = document.getElementById('btnYes');
+        const title = document.getElementById('title');
+        const question = document.getElementById('question');
+        const btnWrapper = document.getElementById('btnWrapper');
+        const successMessage = document.getElementById('successMessage');
+        const mainGif = document.getElementById('mainGif');
+        let isAbsolute = false;
+
+        // Fungsi buat mindahin tombol secara acak
+        function moveButton() {
+            // Ubah posisi tombol jadi fixed/absolute saat pertama kali disentuh
+            if (!isAbsolute) {
+                btnNo.style.position = 'fixed';
+                isAbsolute = true;
+            }
+
+            // Hitung lebar dan tinggi layar dikurang ukuran tombol & kasih margin aman
+            const safeMargin = 20;
+            const maxX = window.innerWidth - btnNo.offsetWidth - safeMargin;
+            const maxY = window.innerHeight - btnNo.offsetHeight - safeMargin;
+
+            // Generate angka random
+            const randomX = Math.max(safeMargin, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(safeMargin, Math.floor(Math.random() * maxY));
+
+            // Terapkan posisi baru
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        }
+
+        // Pindah kalau di-hover (di laptop/PC)
+        btnNo.addEventListener('mouseover', moveButton);
+        
+        // Pindah kalau disentuh/diklik (buat antisipasi di HP)
+        btnNo.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Mencegah klik beneran terjadi
+            moveButton();
+        });
+        btnNo.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        // Aksi kalau tombol Yes diklik!
+        btnYes.addEventListener('click', () => {
+            // Ganti GIF jadi yang romantis/senang
+            mainGif.src = "https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif";
+            
+            // Sembunyin tulisan awal dan tombol
+            title.style.display = 'none';
+            question.style.display = 'none';
+            btnWrapper.style.display = 'none';
+            
+            // Kalau tombol No masih di layar antah berantah, sembunyiin juga
+            btnNo.style.display = 'none';
+
+            // Munculin pesan sukses
+            successMessage.style.display = 'block';
+
+            // Opsional: Bikin animasi confetti sederhana (menggunakan script eksternal ringan)
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+            document.body.appendChild(script);
+            script.onload = () => {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff4d6d', '#ffffff', '#ffb6c1']
+                });
+            };
+        });
+    </script>
+</body>
+</html>
